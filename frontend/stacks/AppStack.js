@@ -76,6 +76,9 @@ const MenuButton = ({ isLoggedIn, onLogout }) => {
             <MenuOption onSelect={() => alert(`About`)} style={styles.menuOption}>
               <Text style={styles.menuOption}>About</Text>
             </MenuOption>
+            <MenuOption onSelect={() => navigation.navigate(`Homepage`, {route: null})}>
+              <Text style={styles.menuOption}>Home</Text>
+            </MenuOption>
           </MenuOptions>
         </Menu>
       ) : (
@@ -86,6 +89,9 @@ const MenuButton = ({ isLoggedIn, onLogout }) => {
           <MenuOptions>
             <MenuOption onSelect={handleLogout}>
               <Text style={styles.menuOption}>Log Out</Text>
+            </MenuOption>
+            <MenuOption onSelect={() => navigation.navigate(`Homepage`, {route: null})}>
+              <Text style={styles.menuOption}>Home</Text>
             </MenuOption>
           </MenuOptions>
         </Menu>
