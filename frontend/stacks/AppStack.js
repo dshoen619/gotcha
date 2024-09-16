@@ -15,12 +15,9 @@ import { faBars } from '@fortawesome/free-solid-svg-icons/faBars'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isTokenValid } from '../api/auth';
 import Chat from '../pages/Chat';
-
-
+import Messaging from '../pages/Messaging'
 
 const Stack = createNativeStackNavigator();
-
-
 
 export default function AppStack() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
@@ -47,65 +44,68 @@ export default function AppStack() {
   };
 
 
-  // MenuButton.js
-const MenuButton = ({ isLoggedIn, onLogout }) => {
+  const MenuButton = ({ isLoggedIn, onLogout }) => {
+    const navigation = useNavigation(); // Ensure navigation is available
+  
+    useEffect(() => {
+      const fetchToken = async () => {
+        try {
+          const userToken = await AsyncStorage.getItem('userToken');
+          const tokenIsValid = await isTokenValid(userToken);
+          setValidToken(tokenIsValid.data.status);
+        } catch (error) {
+          console.error('Error fetching user token:', error);
+        }
+      };
+      fetchToken();
+    }, []); // Refetch token when isLoggedIn changes
+  
+    return (
+      <View style={styles.menuButtonContainer}>
+        {!validToken ? (
+          <Menu>
+            <MenuTrigger>
+              <FontAwesomeIcon icon={faBars} size={32} />
+            </MenuTrigger>
+            <MenuOptions>
+              <MenuOption onSelect={() => navigation.navigate('AuthStack', { route: null })}>
+                <Text style={styles.menuOption}>Login</Text>
+              </MenuOption>
+              <MenuOption onSelect={() => alert(`About`)} style={styles.menuOption}>
+                <Text style={styles.menuOption}>About</Text>
+              </MenuOption>
+              <MenuOption onSelect={() => navigation.navigate(`Homepage`, {route: null})}>
+                <Text style={styles.menuOption}>Home</Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
+        ) : (
+          <Menu>
+            <MenuTrigger>
+              <FontAwesomeIcon icon={faBars} size={32} />
+            </MenuTrigger>
+            <MenuOptions>
+              <MenuOption onSelect={handleLogout}>
+                <Text style={styles.menuOption}>Log Out</Text>
+              </MenuOption>
+              <MenuOption onSelect={() => navigation.navigate(`Homepage`, {route: null})}>
+                <Text style={styles.menuOption}>Home</Text>
+              </MenuOption>
+              <MenuOption onSelect={() => navigation.navigate('Chat')}>
+                <Text style={styles.menuOption}>Messages</Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
+        )}
+      </View>
+    );
+  };
+  
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const userToken = await AsyncStorage.getItem('userToken');
-        const tokenIsValid = await isTokenValid(userToken);
-        setValidToken(tokenIsValid.data.status);
-      } catch (error) {
-        console.error('Error fetching user token:', error);
-      }
-    };
-    fetchToken();
-  }, []); // Refetch token when isLoggedIn changes
   return (
-    <View style={styles.menuButtonContainer}>
-      {!validToken ? (
-        <Menu>
-          <MenuTrigger>
-            <FontAwesomeIcon icon={faBars} size={32} />
-          </MenuTrigger>
-          <MenuOptions>
-            <MenuOption onSelect={() => navigation.navigate('AuthStack', { route: null })}>
-              <Text style={styles.menuOption}>Login</Text>
-            </MenuOption>
-            <MenuOption onSelect={() => alert(`About`)} style={styles.menuOption}>
-              <Text style={styles.menuOption}>About</Text>
-            </MenuOption>
-            <MenuOption onSelect={() => navigation.navigate(`Homepage`, {route: null})}>
-              <Text style={styles.menuOption}>Home</Text>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
-      ) : (
-        <Menu>
-          <MenuTrigger>
-            <FontAwesomeIcon icon={faBars} size={32} />
-          </MenuTrigger>
-          <MenuOptions>
-            <MenuOption onSelect={handleLogout}>
-              <Text style={styles.menuOption}>Log Out</Text>
-            </MenuOption>
-            <MenuOption onSelect={() => navigation.navigate(`Homepage`, {route: null})}>
-              <Text style={styles.menuOption}>Home</Text>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
-      )}
-    </View>
-  );
-};
+  <View style={{ flex: 1 }}>
 
-  return (
-<View style={{ flex: 1 }}>
-      {/* Render MenuButton only if isLoggedIn is not null or undefined */}
-
-      <MenuButton />
-      
+    <MenuButton />
 
       <Stack.Navigator
         screenOptions={{
@@ -116,6 +116,7 @@ const MenuButton = ({ isLoggedIn, onLogout }) => {
         <Stack.Screen name = "MovingPage" component={MovingPage} />
         <Stack.Screen name = "MoverProfile" component={MoverProfile} />
         <Stack.Screen name = "Chat" component={Chat} />
+        <Stack.Screen name = "Messaging" component={Messaging} />
       </Stack.Navigator>
     </View>
   );

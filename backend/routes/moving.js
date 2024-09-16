@@ -4,12 +4,12 @@ const mysql = require('../mysql')
 
 require('dotenv').config();
 
-moversTable = process.env.MOVERS_TABLE
+taskersTable = process.env.TASKERS_TABLE
 
 router.get('/showMovers', async (req, res) => {
     try{
 
-        const query = `SELECT * FROM ${moversTable}`
+        const query = `SELECT * FROM ${taskersTable}`
         const moversData = await mysql.executeQuery(query)
 
         data_dict ={moversData:moversData}

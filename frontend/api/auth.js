@@ -15,4 +15,5 @@ const api = axios.create({
 export const showMovers = () => api.get("/moving/showMovers")
 export const signIn = (data) => api.get("/auth/signIn", { params: data });
 export const signUp = (data) => api.get("/auth/signUp", {params:data})
+export const signUpWorker = (data) => api.get("/auth/signUpWorker", {params:data})
 export const isTokenValid = (token) => api.get("/auth/isTokenValid", {params:{token:token}})

@@ -12,8 +12,6 @@ const MoverProfile = ({ navigation, route, isLoggedIn }) => {
         Cormorant_500Medium,
       });
     
-  console.log('profileRoute',route)
-
   const mover = route.params;
   const rating = mover.rating;
   const full_name = `${mover.first_name} ${mover.family_name}`;
@@ -47,15 +45,13 @@ const MoverProfile = ({ navigation, route, isLoggedIn }) => {
   const openMessager = async() =>{
     let userToken = await AsyncStorage.getItem('userToken');
     const validToken = await isTokenValid(userToken)   
+    console.log('token check 2', validToken)
     const userData = await AsyncStorage.getItem('userData') 
 
-
-    console.log('userToken', userToken)
-    console.log('validToken',validToken)
-    if (validToken === undefined || !validToken.data){
+    if (validToken === undefined || !validToken.data.status){
       navigation.navigate('AuthStack', { route: route });
   } else {
-      navigation.navigate('Chat');
+      navigation.navigate('Messaging', {moverInfo: mover});
   }
     
 }

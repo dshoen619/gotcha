@@ -7,6 +7,7 @@ require('dotenv').config()
 
 usersTable = process.env.USERS_TABLE
 secretKey = process.env.SECRET_KEY
+taskersTable = process.env.TASKERS_TABLE
 
 const generateJwt = async (data) =>{
     return jwt.sign(data, secretKey);
@@ -36,10 +37,22 @@ const comparePassword = async (plainTextPassword, hashedPassword) => {
     }
   };
 
-const getDataByToken = async(token) => {
+const getEmailByToken = async(token) => {
   selectQuery = `SELECT email FROM ${usersTable} where token = ?`
   const userData = await mysql.executeQuery(selectQuery, [token])
   return userData
+}
+
+const getuserDatabyToken = async(token) => {
+  selectQuery = `SELECT id,email FROM ${usersTable} where token = ?`
+  const userData = await mysql.executeQuery(selectQuery, [token])
+  return userData[0]
+}
+
+const getTaskerIdbyEmail = async(email) => {
+  selectQuery = `SELECT id FROM ${taskersTable} where email = ?`
+  const taskerId = await mysql.executeQuery(selectQuery, [email])
+  return taskerId
 }
 
 const isTokenValid= async(token)=> {
@@ -53,19 +66,22 @@ const isTokenValid= async(token)=> {
         jwt.verify(token, secretKey); // Replace 'your_public_key' with the public key used on the server
 
         if (decodedToken.exp && decodedToken.exp < Math.floor(Date.now() / 1000)) {
+          console.log('decoded token exp', decodedToken.exp)
             return {'status':false}; // Token is expired
         }
 
-        const userData = await getDataByToken(token)
+        const userData = await getuserDatabyToken(token)
         const returnData = {'status':true, 'userData': userData}
         return returnData;
     } catch (error) {
-        return {'status':false};;
+      console.log('error', error)
+      return {'status':false};;
     }
 } 
     
 router.get('/isTokenValid', async(req,res)=>{
   const token = req.query.token
+  console.log('token', token)
   const validToken = await isTokenValid(token)
   console.log(validToken)
   res.send(validToken)
@@ -85,7 +101,6 @@ router.get('/signIn', async (req, res) => {
         const passwordInDb = usersData[0].password;
   
         const passwordsMatch = await comparePassword(password, passwordInDb);
-
   
         if (passwordsMatch) {
           const token = await generateJwt(email);
@@ -134,4 +149,33 @@ router.get('/signUp', async(req,res) =>{
    
 })
 
-module.exports = router;
+router.get('/signUpWorker', async(req,res) =>{ 
+  try{
+   console.log('signupworker entered')
+   const email = req.query.email
+   const password = req.query.password
+
+   const selectQuery = `SELECT email from ${usersTable}`
+   const existingEmails = await mysql.executeQuery(selectQuery)
+
+   const emailAlreadyExists = existingEmails.some(existingEmail => existingEmail.email === email)
+
+   if (emailAlreadyExists){
+       res.send('email_exists')
+       return
+   }
+
+   const hashedPassword = await hashPassword(password)
+
+   const insertQuery = `INSERT INTO ${usersTable} (email, password) VALUES (?, ?)`;
+   const insertNewUser = await mysql.executeQuery(insertQuery,[email,hashedPassword])
+   
+   res.send(true)
+  }catch(err){
+   console.log(err)
+   res.send(err)
+  }
+  
+})
+
+module.exports = {router:router, getEmailByToken, getuserDatabyToken, getTaskerIdbyEmail};

@@ -9,7 +9,7 @@ import SignInScreen from '../pages/SignIn';
 import AuthContext from '../context/AuthContext';
 import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { signIn, signUp } from '../api/auth';
+import { signIn, signUp, signUpWorker } from '../api/auth';
 import SignUpScreen from '../pages/signUp';
 import { useState, useEffect } from 'react';
 
@@ -89,6 +89,8 @@ const authContext = React.useMemo( () => ({
         const signIndData = {email, password}
         const response = await signIn(signIndData)
         const responseData = response.data
+
+        console.log('responseData',responseData)
         
         if (responseData != false) {
             await AsyncStorage.setItem('userData', responseData[0])
@@ -123,6 +125,20 @@ const authContext = React.useMemo( () => ({
         console.error('Error during sign-up:', error);
       }
     },
+    signUpWorker: async (data) => {
+      const email = data.email;
+      const password = data.password;
+      const signUpData = { email, password };
+    
+      try {
+        const response = await signUpWorker(signUpData);
+        return response.data
+
+      } catch (error) {
+        console.error('Error during sign-up:', error);
+      }
+    },
+
 }),
 [previousPageData, navigation]
 );

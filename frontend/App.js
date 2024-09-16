@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Chat from './pages/Chat';
+
 
 
 import AppStack from './stacks/AppStack';
@@ -25,7 +25,6 @@ const App = () =>{
       <Stack.Navigator headerMode="none">
         <Stack.Screen name="AppStack" component={AppStack} options={{headerShown:false}}/>
         <Stack.Screen name="AuthStack" component ={AuthStack} options={{headerShown:false}}/>
-        <Stack.Screen name="Chat" component={Chat} options={{headerShown:false}}/>
       </Stack.Navigator>
     </NavigationContainer>   
    </MenuProvider>
