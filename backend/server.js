@@ -1,45 +1,37 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 
-const app = express()
-const port = process.env.PORT
+const app = express();
+const port = process.env.PORT || 3000; // Ensure the port is defined, fallback to 3000 if not
 
-const http = require("http").Server(app)
+const http = require('http').createServer(app);
 
-app.use(cors())
+app.use(cors());
+app.use(express.json());
 
-const socketIO = require('socket.io')(http, {
-    cors: {
-        origin: `<http://localhost:${port}>`
-    }
-});
+// Import routes
+const movingRoutes = require('./routes/moving');
+const { router: authRoutes, getDataByToken }  = require('./routes/auth');
+const chatRoutes = require('./routes/chat').router;
 
-//👇🏻 Add this before the app.get() block
-socketIO.on('connection', (socket) => {
-    console.log(`⚡: ${socket.id} user just connected!`);
-
-    socket.on('disconnect', () => {
-      socket.disconnect()
-      console.log('🔥: A user disconnected');
-    });
-});
-
-const movingRoutes = require('./routes/moving')
-const authRoutes = require('./routes/auth')
-
-app.use('/moving', movingRoutes)
-app.use('/auth', authRoutes)
+// Use routes
+app.use('/moving', movingRoutes);
+app.use('/auth', authRoutes);
+app.use('/chat', chatRoutes);
 
 app.get('/movingInfo', (req, res) => {
-  // Your route logic here
-  res.json(req.query);
+    res.json(req.query);
 });
 
-app.get('/test', (req,res) =>{
-  console.log('test')
-})
+app.get('/test', (req, res) => {
+    res.send('test');
+});
 
-app.listen(port, ()=>{
-  console.log(`Server listening on port ${port}`)
-})
+// Import and use the chatSocket function
+const chatSocket = require('./routes/chat').chatSocket;
+chatSocket(http);
+
+http.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+});

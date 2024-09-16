@@ -1,3 +1,4 @@
+import { width } from "@fortawesome/free-solid-svg-icons/faBars";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -47,6 +48,11 @@ export const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: "bold",
         color: "green",
+        textAlign:'center',
+        display:'block',
+        marginRight:'auto',
+        marginLeft:'auto',
+        width:'fit'
     },
     chattopContainer: {
         backgroundColor: "#F7F7F7",
@@ -71,7 +77,12 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    chatemptyText: { fontWeight: "bold", fontSize: 24, paddingBottom: 30 },
+    chatemptyText: { 
+        fontWeight: "bold", 
+        fontSize: 24, 
+        paddingBottom: 30 
+    },
+
     messagingscreen: {
         flex: 1,
     },
@@ -145,7 +156,7 @@ export const styles = StyleSheet.create({
         marginBottom: 15,
     },
     mmessage: {
-        maxWidth: "50%",
+        maxWidth: "80%",
         backgroundColor: "#f5ccc2",
         padding: 15,
         borderRadius: 10,
@@ -184,4 +195,55 @@ export const styles = StyleSheet.create({
     ctime: {
         opacity: 0.5,
     },
+    messageContainer: {
+        marginVertical: 10,
+        marginHorizontal: 10,
+        marginTop:10,
+    },
+    messageWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    currentUserWrapper: {
+        justifyContent: 'flex-end',
+    },
+    avatar: {
+        marginRight: 10,
+    },
+    message: {
+        maxWidth: '80%',
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: '#e5e5ea',
+    },
+    currentUserMessage: {
+        backgroundColor: 'rgb(194, 243, 194)',
+    },
+    timestamp: {
+        fontSize: 12,
+        color: '#888',
+        textAlign: 'left',
+        marginLeft: 40,
+    },
+    currentUserTimestamp: {
+        textAlign: 'right',
+        marginLeft: 0,
+        marginRight: 40,
+    },
+    messagingScreenHeader:{
+        justifyContent: "center",
+        flexDirection: "row",
+        padding:20,
+        backgroundColor:'white'
+    },
+    headerText: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        fontFamily:'Cormorant_500Medium'
+    },
+    dateHeader: {
+        fontFamily: 'Cormorant_500Medium',
+        textAlign: 'center'
+    }
 });
